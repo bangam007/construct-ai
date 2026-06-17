@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ConstructAI - Real-World Concrete Predictor</title>
+    <!-- Google Fonts: Outfit & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo">
+                <i class="fa-solid fa-building-columns icon-logo"></i>
+                <div class="logo-text">
+                    <h1>Construct<span>AI</span></h1>
+                    <p>Concrete Compressive Strength Predictor & Calibration Engine</p>
+                </div>
+            </div>
+            <div class="header-badges">
+                <div class="model-badge ml">
+                    <i class="fa-solid fa-microchip"></i>
+                    <span>Random Forest Regressor</span>
+                </div>
+                <div class="model-badge code">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span>ACI 318 / Eurocode 2</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Dashboard Layout -->
+        <main class="dashboard-grid">
+            <!-- Left Column: Mix Designer -->
+            <section class="card mix-designer-card">
+                <div class="card-header">
+                    <h2><i class="fa-solid fa-sliders"></i> Mix Design Proportions</h2>
+                    <p>Adjust baseline quantities of raw ingredients per cubic meter</p>
+                </div>
+                
+                <div class="sliders-container" id="sliders-grid">
+                    <div class="slider-group-skeleton">Loading mix controls...</div>
+                </div>
+            </section>
+
+            <!-- Center Column: Live Calibration & Design Safety Card -->
+            <div class="prediction-column">
+                <section class="card calibration-card">
+                    <div class="card-header">
+                        <h2><i class="fa-solid fa-compass-drafting"></i> Local Material Calibration</h2>
+                        <p>Adjust factors to match local site conditions and safety standards</p>
+                    </div>
+                    
+                    <div class="calibration-form">
+                        <div class="control-group">
+                            <label for="select-cement-type"><i class="fa-solid fa-flask"></i> Cement Hydration Kinetics</label>
+                            <select id="select-cement-type" class="custom-select full-width">
+                                <option value="type_i">OPC Type I (Standard Hydration)</option>
+                                <option value="type_iii">OPC Type III (High Early Strength)</option>
+                                <option value="type_iv">OPC Type IV (Low Heat / Slow Cure)</option>
+                                <option value="type_ip">PPC Type IP (Blended Pozzolanic)</option>
+                            </select>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="select-aggregate-shape"><i class="fa-solid fa-shapes"></i> Aggregate Shape / Texture</label>
+                            <select id="select-aggregate-shape" class="custom-select full-width">
+                                <option value="angular">Angular (Crushed Stone - High Bond)</option>
+                                <option value="rounded">Rounded (River Gravel - Medium Bond)</option>
+                                <option value="flaky">Flaky / Elongated (Weak packing - Low Bond)</option>
+                            </select>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="select-water-quality"><i class="fa-solid fa-droplet-slash"></i> Water Quality / Impurities</label>
+                            <select id="select-water-quality" class="custom-select full-width">
+                                <option value="potable">Potable Tap Water (Clean Hydration)</option>
+                                <option value="recycled">Recycled Wash Water (-6% Strength)</option>
+                                <option value="brackish">Brackish / Saline Water (-18% Strength)</option>
+                            </select>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="select-curing-method"><i class="fa-solid fa-temperature-half"></i> Curing Method on Site</label>
+                            <select id="select-curing-method" class="custom-select full-width">
+                                <option value="standard_wet">Standard Wet Curing (Lab Optimal)</option>
+                                <option value="steam">Steam Cured (Fast early, lower 28d)</option>
+                                <option value="poor_dry">Poor / Air Dry Cured (-24% Strength)</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="card code-safety-card">
+                    <div class="card-header">
+                        <h2><i class="fa-solid fa-scale-balanced"></i> Structural Code Reductions</h2>
+                    </div>
+                    
+                    <div class="safety-form-grid">
+                        <div class="control-group">
+                            <label for="select-qc-level">Quality Control (QC)</label>
+                            <select id="select-qc-level" class="custom-select">
+                                <option value="excellent">Excellent Control (σ = 3 MPa)</option>
+                                <option value="good" selected>Good Control (σ = 4 MPa)</option>
+                                <option value="fair">Fair Control (σ = 5 MPa)</option>
+                            </select>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="select-design-code">Design Code</label>
+                            <select id="select-design-code" class="custom-select">
+                                <option value="eurocode_2">Eurocode 2 (EN 1992)</option>
+                                <option value="aci_318">ACI 318 (United States)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="slider-item safety-slider">
+                        <div class="slider-info">
+                            <span class="slider-label" id="sf-slider-label">Safety Factor (γ_c)</span>
+                            <div class="slider-val-box" id="valbox-sf">1.50</div>
+                        </div>
+                        <input type="range" class="slider-control" id="slider-sf" min="1.0" max="2.0" step="0.05" value="1.50">
+                    </div>
+                </section>
+            </div>
+
+            <!-- Right Column: Outputs, Calculations, & Analysis -->
+            <div class="analytics-column">
+                <section class="card outputs-card">
+                    <div class="card-header">
+                        <h2><i class="fa-solid fa-square-poll-vertical"></i> Safe Structural Strength</h2>
+                        <span class="live-indicator"><span class="dot"></span>Live Engine</span>
+                    </div>
+
+                    <!-- Prediction Output Values Stack -->
+                    <div class="outputs-stack">
+                        <div class="output-block major">
+                            <span class="label">Factored Design Strength (<span id="output-reduction-type">f_cd</span>)</span>
+                            <div class="value-container">
+                                <span class="number" id="output-design-strength">--</span>
+                                <span class="unit">MPa</span>
+                            </div>
+                            <p class="desc">Safe limit used directly for reinforced concrete structural calculations.</p>
+                        </div>
+
+                        <div class="output-grid-compact">
+                            <div class="output-block sub">
+                                <span class="label">Characteristic ($f_{ck}$)</span>
+                                <span class="number" id="output-char-strength">--</span>
+                                <span class="unit">MPa</span>
+                            </div>
+                            <div class="output-block sub">
+                                <span class="label">Calibrated Mean</span>
+                                <span class="number" id="output-calibrated-mean">--</span>
+                                <span class="unit">MPa</span>
+                            </div>
+                            <div class="output-block sub">
+                                <span class="label">Raw ML Output</span>
+                                <span class="number" id="output-raw-ml">--</span>
+                                <span class="unit">MPa</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Water/Binder & Grade Badge -->
+                    <div class="grade-classification-card">
+                        <div class="badge-item">
+                            <span class="label">Grade Classification:</span>
+                            <span class="badge" id="grade-val">C--</span>
+                        </div>
+                        <div class="badge-item">
+                            <span class="label">Water/Binder Ratio:</span>
+                            <span class="badge" id="wb-val">0.00</span>
+                        </div>
+                    </div>
+                    <p class="wb-feedback" id="wb-feedback-txt">Calculating...</p>
+
+                    <!-- Calibration Multipliers details -->
+                    <div class="multipliers-pillbox">
+                        <span class="pill">Cement: <strong id="multiplier-cement">1.00</strong></span>
+                        <span class="pill">Aggregates: <strong id="multiplier-aggregate">1.00</strong></span>
+                        <span class="pill">Water: <strong id="multiplier-water">1.00</strong></span>
+                        <span class="pill">Curing: <strong id="multiplier-curing">1.00</strong></span>
+                        <span class="pill total">Total Factor: <strong id="multiplier-total">1.00</strong></span>
+                    </div>
+
+                    <!-- Site Warning Container -->
+                    <div class="alerts-container" id="alerts-box" style="display: none;">
+                        <h3><i class="fa-solid fa-triangle-exclamation"></i> Site Concerns</h3>
+                        <ul id="alerts-list">
+                            <!-- Warnings populated here -->
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- Sensitivity Area Graph -->
+                <section class="card chart-card">
+                    <div class="card-header">
+                        <h2><i class="fa-solid fa-chart-area"></i> Calibrated Sensitivity</h2>
+                        <p>Analyze strength trends holding other variables constant</p>
+                    </div>
+                    <div class="chart-controls">
+                        <label for="sensitivity-select">Sweep Variable:</label>
+                        <select id="sensitivity-select" class="custom-select">
+                            <option value="cement">Cement</option>
+                            <option value="water">Water</option>
+                            <option value="age">Curing Age</option>
+                            <option value="slag">Blast Furnace Slag</option>
+                            <option value="ash">Fly Ash</option>
+                            <option value="superplastic">Superplasticizer</option>
+                        </select>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="sensitivityChart"></canvas>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
