@@ -73,6 +73,12 @@ async function fetchMetadata() {
     const res = await fetch(`${API_BASE}/metadata`);
     if (!res.ok) throw new Error("Metadata fetch failed");
     modelMetadata = await res.json();
+    
+    // Update GitHub repository link dynamically if configured
+    const repoLink = document.getElementById('github-repo-link');
+    if (repoLink && modelMetadata.github_url) {
+        repoLink.href = modelMetadata.github_url;
+    }
 }
 
 // Dynamically create mixSliders

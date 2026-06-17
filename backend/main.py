@@ -156,13 +156,32 @@ def compute_calibration_factors(mix: dict) -> tuple:
     total_factor = cement_factor * agg_factor * water_factor * curing_factor
     return total_factor, cement_factor, agg_factor, water_factor, curing_factor
 
+def get_git_remote_url() -> str:
+    import subprocess
+    try:
+        url = subprocess.check_output(
+            ["git", "config", "--get", "remote.origin.url"], 
+            stderr=subprocess.DEVNULL
+        ).decode().strip()
+        if url.startswith("git@"):
+            # Convert SSH to HTTPS format
+            url = url.replace(":", "/").replace("git@", "https://").replace(".git", "")
+        elif url.endswith(".git"):
+            url = url[:-4]
+        return url
+    except Exception:
+        return None
+
 @app.get("/api/metadata")
 async def get_metadata():
     if metadata is None:
         load_resources()
     if metadata is None:
         raise HTTPException(status_code=503, detail="Model/metadata is not loaded.")
-    return metadata
+    
+    # Merge loaded metadata with dynamic github remote URL
+    git_url = get_git_remote_url() or "https://github.com/your-username/construct-ai"
+    return {**metadata, "github_url": git_url}
 
 @app.post("/api/predict")
 async def predict_strength(mix_input: ConcreteMixInput):
