@@ -38,7 +38,7 @@ const alertsList = document.getElementById('alerts-list');
 let modelMetadata = null;
 let currentMix = {};
 let sensitivityChart = null;
-const API_BASE = '/api';
+const API_BASE = window.location.protocol === 'file:' ? 'http://127.0.0.1:8000/api' : '/api';
 
 const featureLabels = {
     'cement': { name: 'Cement', unit: 'kg/m³', desc: 'Primary hydraulic binder' },
