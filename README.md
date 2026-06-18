@@ -81,7 +81,7 @@ Make sure you have **Python 3.10+** and **pip** installed.
    ```
 
 3. Open your web browser and navigate to:
-   👉 **[http://localhost:8000](http://localhost:8000)**
+   👉 **[http://localhost:8000](https://construct-ai-77m7.onrender.com)**
 
 ---
 
