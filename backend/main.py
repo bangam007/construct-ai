@@ -180,7 +180,7 @@ async def get_metadata():
         raise HTTPException(status_code=503, detail="Model/metadata is not loaded.")
     
     # Merge loaded metadata with dynamic github remote URL
-    git_url = get_git_remote_url() or "https://github.com/your-username/construct-ai"
+    git_url = get_git_remote_url() or "https://github.com/bangam007/construct-ai"
     return {**metadata, "github_url": git_url}
 
 @app.post("/api/predict")
